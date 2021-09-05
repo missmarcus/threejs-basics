@@ -2,11 +2,10 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
-//import torusKnot from './shapes/torusknot'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import gsap from 'gsap'
 
-// Texture Loader
-const loader = new THREE.TextureLoader()
-const star = loader.load('./assets/dot2.png')
+const gltfLoader = new GLTFLoader();
 
 // Debug
 const gui = new dat.GUI()
@@ -17,55 +16,40 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
-// Objects
-const torusgeometry = new THREE.TorusGeometry( .7, .2, 16, 100 );
-const knotgeometry = new THREE.TorusKnotGeometry( 10/20, 3/25, 100, 16 )
-const particlesgeometry = new THREE.BufferGeometry;
-const particleCnt = 300;
+let tl = gsap.timeline()
 
-const posArray = new Float32Array(particleCnt * 3);
-/// xyz, xyz, xyz, xyz
+// 3D Objects
+gltfLoader.load('../assets/phone.gltf', (gltf) => {
+    gltf.scene.scale.set(0.08, 0.08, 0.08)
+    gltf.scene.rotation.set(0, 3.3, 0)
 
-for( let i = 0; i < particleCnt * 3; i++ ){
-   // posArray[i] = Math.random()
-   // posArray[i] = Math.random() - 0.5
-  // posArray[i] = (Math.random() - 0.5) *5
-   posArray[i] = (Math.random() - 0.5) * (Math.random() *5)
+    scene.add(gltf.scene)
+    gui.add(gltf.scene.rotation, 'x').min(0).max(9)
+    gui.add(gltf.scene.rotation, 'y').min(0).max(9)
+    gui.add(gltf.scene.rotation, 'z').min(0).max(9)
 
+    tl.to(gltf.scene.rotation, {y: 4.7, duration: 1})
+    tl.to(gltf.scene.scale, {x: 0.12, y: 0.12, z: 0.12, duration: 2.5}, "-=2")
+    tl.to(gltf.scene.position, {x: 0.3, y: 0, z: 0, duration: 3}, "-=0.5")
+    tl.to(gltf.scene.rotation, {y: -14.5, duration: 5})
+    tl.to(gltf.scene.scale, {x: 0.2, y: 0.2, z: 0.2, duration: 2.5}, "-=2")
 
-}
+})
 
-particlesgeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3))
 
 // Materials
 
-const material = new THREE.PointsMaterial({
-    size: 0.0095,
-    color: '#37C8B2'
-})
-const starMaterial = new THREE.PointsMaterial({
-    size: 0.007,
-    map: star,
-    transparent: true,
-    color: 'white'
-})
-//material.color = new THREE.Color(0x00ffff)
-
 // Mesh
-const torus = new THREE.Points(torusgeometry,material)
-const torusKnot = new THREE.Points( knotgeometry, material )
-const particlesMesh = new THREE.Points(particlesgeometry, starMaterial)
-
-scene.add(torusKnot, particlesMesh)
 
 // Lights
 
-const pointLight = new THREE.PointLight(0xffffff, 0.1)
+const pointLight = new THREE.PointLight(0xffffff, 0.5)
+const generalLight = new THREE.AmbientLight( 0x404040, 3 )
 
 pointLight.position.x = 2
 pointLight.position.y = 3
 pointLight.position.z = 4
-scene.add(pointLight)
+scene.add(pointLight, generalLight)
 
 /**
  * Sizes
@@ -97,7 +81,7 @@ window.addEventListener('resize', () =>
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.x = 0
 camera.position.y = 0
-camera.position.z = 3
+camera.position.z = 1.1
 scene.add(camera)
 
 // Controls
@@ -108,21 +92,11 @@ scene.add(camera)
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
+    canvas: canvas,
+    alpha: true,
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-renderer.setClearColor(new THREE.Color('#21282a'))
-
-// mouse
-document.addEventListener('mousemove', animateParticles)
-let mouseX = 0
-let mouseY = 0
-
-function animateParticles(event){
-    mouseY = event.clientY
-    mouseX = event.clientX
-}
 
 /**
  * Animate
@@ -136,13 +110,8 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
 
     // Update objects
-    torusKnot.rotation.y = .3 * elapsedTime
+    //torus.rotation.y = .5 * elapsedTime
     //knot.rotation.y = .8 * elapsedTime
-    particlesMesh.rotation.y = 0.1 * elapsedTime
-    if (mouseX > 0){
-        particlesMesh.rotation.x = -mouseY * (elapsedTime * 0.00007)
-        particlesMesh.rotation.y = -mouseX * (elapsedTime * 0.00007)
-    }
 
 
     // Update Orbital Controls
