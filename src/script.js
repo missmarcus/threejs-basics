@@ -6,7 +6,7 @@ import * as dat from 'dat.gui'
 
 // Texture Loader
 const loader = new THREE.TextureLoader()
-const star = loader.load('./assets/dot.png')
+const star = loader.load('./assets/dot2.png')
 
 // Debug
 const gui = new dat.GUI()
@@ -21,7 +21,7 @@ const scene = new THREE.Scene()
 const torusgeometry = new THREE.TorusGeometry( .7, .2, 16, 100 );
 const knotgeometry = new THREE.TorusKnotGeometry( 10/20, 3/25, 100, 16 )
 const particlesgeometry = new THREE.BufferGeometry;
-const particleCnt = 3000;
+const particleCnt = 300;
 
 const posArray = new Float32Array(particleCnt * 3);
 /// xyz, xyz, xyz, xyz
@@ -40,8 +40,8 @@ particlesgeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3
 // Materials
 
 const material = new THREE.PointsMaterial({
-    size: 0.009,
-    color: '#00ffff'
+    size: 0.0095,
+    color: '#37C8B2'
 })
 const starMaterial = new THREE.PointsMaterial({
     size: 0.007,

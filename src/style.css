@@ -30,10 +30,9 @@ body
     place-content: center;
 }
 .content { 
-    display: flex;
     gap: 5em;
     width: 100%;
-    padding-top: 3em;
+    padding-top: 2em;
     position: relative;
 }
 
@@ -54,12 +53,14 @@ h1{
     text-align: right;
 
 }
+p {
+    font-size: 1rem;
+    width: 50vw;
+    line-height: 97%;
+    text-align: right;
+}
 h1, p {
     flex-basis: 0;
     flex-grow: 1;
     clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
-}
-p {
-    font-size: 1.3rem;
-    width: 40vw;
 }
