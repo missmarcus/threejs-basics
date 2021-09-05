@@ -4,10 +4,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
 //import torusKnot from './shapes/torusknot'
 
-// Texture Loader
-const loader = new THREE.TextureLoader()
-const star = loader.load('./assets/dot.png')
-
 // Debug
 const gui = new dat.GUI()
 
@@ -19,44 +15,15 @@ const scene = new THREE.Scene()
 
 // Objects
 const torusgeometry = new THREE.TorusGeometry( .7, .2, 16, 100 );
-const knotgeometry = new THREE.TorusKnotGeometry( 10/20, 3/25, 100, 16 )
-const particlesgeometry = new THREE.BufferGeometry;
-const particleCnt = 3000;
-
-const posArray = new Float32Array(particleCnt * 3);
-/// xyz, xyz, xyz, xyz
-
-for( let i = 0; i < particleCnt * 3; i++ ){
-   // posArray[i] = Math.random()
-   // posArray[i] = Math.random() - 0.5
-  // posArray[i] = (Math.random() - 0.5) *5
-   posArray[i] = (Math.random() - 0.5) * (Math.random() *5)
-
-
-}
-
-particlesgeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3))
-
 // Materials
 
-const material = new THREE.PointsMaterial({
-    size: 0.009,
-    color: '#00ffff'
-})
-const starMaterial = new THREE.PointsMaterial({
-    size: 0.007,
-    map: star,
-    transparent: true,
-    color: 'white'
-})
-//material.color = new THREE.Color(0x00ffff)
+const material = new THREE.MeshBasicMaterial()
+material.color = new THREE.Color(0x0000ff)
 
 // Mesh
-const torus = new THREE.Points(torusgeometry,material)
-const torusKnot = new THREE.Points( knotgeometry, material )
-const particlesMesh = new THREE.Points(particlesgeometry, starMaterial)
+const torus = new THREE.Mesh(torusgeometry,material)
 
-scene.add(torusKnot, particlesMesh)
+scene.add(torus)
 
 // Lights
 
@@ -112,17 +79,6 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-renderer.setClearColor(new THREE.Color('#21282a'))
-
-// mouse
-document.addEventListener('mousemove', animateParticles)
-let mouseX = 0
-let mouseY = 0
-
-function animateParticles(event){
-    mouseY = event.clientY
-    mouseX = event.clientX
-}
 
 /**
  * Animate
@@ -136,13 +92,8 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
 
     // Update objects
-    torusKnot.rotation.y = .3 * elapsedTime
+    torus.rotation.y = .5 * elapsedTime
     //knot.rotation.y = .8 * elapsedTime
-    particlesMesh.rotation.y = 0.1 * elapsedTime
-    if (mouseX > 0){
-        particlesMesh.rotation.x = -mouseY * (elapsedTime * 0.00007)
-        particlesMesh.rotation.y = -mouseX * (elapsedTime * 0.00007)
-    }
 
 
     // Update Orbital Controls
