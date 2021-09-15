@@ -19,8 +19,8 @@ const scene = new THREE.Scene()
 let tl = gsap.timeline()
 
 // 3D Objects
-gltfLoader.load('../assets/lilly.gltf', (gltf) => {
-    gltf.scene.scale.set(0.4, 0.4, 0.4)
+gltfLoader.load('../assets/movingmonkey4.glb', (gltf) => {
+    gltf.scene.scale.set(0.08, 0.08, 0.08)
     gltf.scene.rotation.set(0, 3.3, 0)
 
     scene.add(gltf.scene)
@@ -28,12 +28,10 @@ gltfLoader.load('../assets/lilly.gltf', (gltf) => {
     gui.add(gltf.scene.rotation, 'y').min(0).max(9)
     gui.add(gltf.scene.rotation, 'z').min(0).max(9)
 
-    tl.to(gltf.scene.rotation, {y: 4.7, duration: 1})
-    tl.to(gltf.scene.scale, {x: 0.6, y: 0.6, z: 0.6, duration: 2.5}, "-=2")
+    tl.to(gltf.scene.rotation, {y: 5.8, duration: 1})
+    tl.to(gltf.scene.scale, {x: 0.2, y: 0.2, z: 0.2, duration: 2.5}, "-=2")
     tl.to(gltf.scene.position, {x: 0.3, y: 0, z: 0, duration: 3}, "-=0.5")
-    tl.to(gltf.scene.rotation, {y: -14.5, duration: 5})
-    tl.to(gltf.scene.scale, {x: 1.2, y: 1.2, z: 1.2, duration: 2.5}, "-=2")
-
+ 
 })
 
 
