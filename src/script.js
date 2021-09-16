@@ -27,7 +27,7 @@ createApp({
     
     // Mesh
   	const bubbleGeometry = new THREE.SphereGeometry(1, 64, 32)
-    const pointGeometry = new THREE.SphereGeometry(1.2, 64, 32)
+    const pointGeometry = new THREE.SphereGeometry(1.25, 64, 32)
 
     // material
     const bubbleMaterial = new THREE.MeshStandardMaterial(this.params)
