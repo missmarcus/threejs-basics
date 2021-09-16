@@ -25,7 +25,7 @@ createApp({
     //this.scene.environment = this.scene.background = envMap
     this.scene.environment = envMap
     
-    // geometry
+    // Mesh
   	const bubbleGeometry = new THREE.SphereGeometry(1, 64, 32)
     const pointGeometry = new THREE.SphereGeometry(1.25, 64, 32)
 
@@ -42,18 +42,10 @@ createApp({
         vec4 diffuseColor = vec4(0, 2.55, 2.25, 1.);  
       `)
     }
-    const lineMaterial = new THREE.LineBasicMaterial( {
-      color: 0xffffff,
-      linewidth: 4,
-      linecap: 'round', //ignored by WebGLRenderer
-      linejoin:  'round' //ignored by WebGLRenderer
-    } );
-
-    //mesh
+    
     this.bubble = new THREE.Mesh(bubbleGeometry, bubbleMaterial)
-    this.net = new THREE.Line(pointGeometry, lineMaterial)
-    this.points = new THREE.Points(pointGeometry, pointMaterial)
-    this.scene.add(this.net, this.bubble, this.points)
+    this.net = new THREE.Points(pointGeometry, pointMaterial)
+    this.scene.add(this.net, this.bubble)
     
   },
   tick(time) {
