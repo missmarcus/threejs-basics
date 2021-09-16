@@ -15,7 +15,7 @@ createApp({
         roughness: 0
     },
 	async init() {
-  	// OrbitControls
+  	//OrbitControls
     this.controls = new OrbitControls(this.camera, this.renderer.domElement)
     this.controls.enableDamping = true
     this.controls.autoRotate = true
@@ -26,19 +26,26 @@ createApp({
     this.scene.environment = envMap
     
     // Mesh
-  	const geometry = new THREE.SphereGeometry(1, 64, 32)
-    const material = new THREE.MeshStandardMaterial(this.params)
-    
-    material.onBeforeCompile = shader => {
+  	const bubbleGeometry = new THREE.SphereGeometry(1, 64, 32)
+    const pointGeometry = new THREE.SphereGeometry(1, 64, 32)
+
+    // material
+    const bubbleMaterial = new THREE.MeshStandardMaterial(this.params)
+    const pointMaterial = new THREE.PointsMaterial({
+      size: 0.0095,
+      color: '#37C8B2'
+    })
+    bubbleMaterial.onBeforeCompile = shader => {
     	shader.fragmentShader = shader.fragmentShader.replace(/vec4 diffuseColor.*;/, `
         //vec3 rgb = vNormal * 0.5 + 0.5;
-		//vec4 diffuseColor = vec4(rgb, 1.);  
+		    //vec4 diffuseColor = vec4(rgb, 1.);  
         vec4 diffuseColor = vec4(0, 2.55, 2.25, 1.);  
       `)
     }
     
-    this.mesh = new THREE.Mesh(geometry, material)
-    this.scene.add(this.mesh)
+    this.bubble = new THREE.Mesh(bubbleGeometry, bubbleMaterial)
+    this.net = new THREE.Mesh(pointGeometry, pointMaterial)
+    this.scene.add(this.net)
     
   },
   tick(time) {
