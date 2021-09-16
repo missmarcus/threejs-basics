@@ -7,63 +7,69 @@ import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 const hdriURL = 'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/empty_warehouse_01_1k.hdr'
 
 
+// Debug
+const gui = new dat.GUI()
+
 createApp({
-	params: {
-  	roughness: 0.1
-  },
+    params:{
+        roughness: 0
+    },
 	async init() {
-  	// OrbitControls
+  	//OrbitControls
     this.controls = new OrbitControls(this.camera, this.renderer.domElement)
     this.controls.enableDamping = true
     this.controls.autoRotate = true
     
     // Environment
   	const envMap = await loadHDRI(hdriURL, this.renderer)
-  	this.scene.environment = this.scene.background = envMap
-    //this.scene.environment = envMap
+    //this.scene.environment = this.scene.background = envMap
+    this.scene.environment = envMap
     
-    // Mesh
-  	const geometry = new THREE.SphereGeometry(1, 64, 32)
-    const cubeGeometry = new THREE.BoxGeometry(50, 10, 50);
+    // geometry
+  	const cubeGeometry = new THREE.BoxGeometry(80, 6, 80);
+  	const sphereGeometry = new THREE.SphereGeometry(10, 50, 50);
+
+    //this.mCubeCamera = new THREE.CubeCamera(0.1, 1000, 1000); // near, far, cubeResolution
+    //this.scene.add(this.mCubeCamera);
 
     // material
-    const cubeMaterial = new THREE.MeshLambertMaterial({color:0xffffff * Math.random()}) 
-    const material = new THREE.MeshStandardMaterial(this.params)
+    const cubeMaterial = new THREE.MeshStandardMaterial(this.params)
+    const sphereMaterial = new THREE.MeshStandardMaterial(this.params)
+    /*const mirrorCubeMaterial = new THREE.MeshBasicMaterial( 
+      { envMap: this.mCubeCamera.renderTarget, side: THREE.DoubleSide } );*/
 
-    material.onBeforeCompile = shader => {
+    cubeMaterial.onBeforeCompile = shader => {
     	shader.fragmentShader = shader.fragmentShader.replace(/vec4 diffuseColor.*;/, `
         //vec3 rgb = vNormal * 0.5 + 0.5;
-				//vec4 diffuseColor = vec4(rgb, 1.);  
-        vec4 diffuseColor = vec4(0, 2.55, 2.25, 1.);  
+		    //vec4 diffuseColor = vec4(rgb, 1.);  
+        vec4 diffuseColor = vec4(0, 0, 0, 1.);  
       `)
     }
-    const cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
-    cube.position.set(0, 0, 0);
+    sphereMaterial.onBeforeCompile = shader => {
+    	shader.fragmentShader = shader.fragmentShader.replace(/vec4 diffuseColor.*;/, `
+        vec3 rgb = vNormal * 0.5 + 0.5;
+		    vec4 diffuseColor = vec4(rgb, 1.);  
+        //vec4 diffuseColor = vec4(0, 2.55, 2.25, 1.);  
+      `)
+    }
 
-    this.mesh = new THREE.Mesh(geometry, material)
-    this.scene.add(this.mesh, this.cube)
+    //mesh
+    this.cube= new THREE.Mesh(cubeGeometry, cubeMaterial)
+    this.sphere= new THREE.Mesh(sphereGeometry, sphereMaterial)
+    this.sphere.position.set(0, 20, 0);
+    this.cube.position.set(1, 0, 0);
+
+    //this.mCubeCamera.position = this.cube.position;
+    //this.mCubeCamera.lookAt(new THREE.Vector3(0, 0, 0));
+
+    this.scene.add( this.cube, this.sphere)
     
-    // GUI
-    const gui = new GUI()
-    gui.add(this.params, 'roughness', 0, 1, 0.01).onChange(v => material.roughness = v)
   },
   tick(time) {
     //this.mesh.rotation.x = this.mesh.rotation.y = time
     this.controls.update()
   }
 })
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Below: boilerplate Three.js app setup and helper functions
@@ -117,15 +123,11 @@ function createCamera() {
     0.1,
     1000
   )
-  camera.position.set(0, 0, 2)
+  camera.position.set(0, 90, 150);
   return camera
 }
 
-/**
- * @param {string} url - Path to equirectandular .hdr
- * @param {THREE.WebGLRenderer} renderer
- * @returns {Promise<THREE.Texture>}
- */
+
 function loadHDRI(url, renderer) {
   return new Promise(resolve => {
     const loader = new RGBELoader()
