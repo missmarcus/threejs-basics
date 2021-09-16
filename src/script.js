@@ -27,12 +27,12 @@ createApp({
     
     // Mesh
   	const bubbleGeometry = new THREE.SphereGeometry(1, 64, 32)
-    const pointGeometry = new THREE.SphereGeometry(1, 64, 32)
+    const pointGeometry = new THREE.SphereGeometry(1.2, 64, 32)
 
     // material
     const bubbleMaterial = new THREE.MeshStandardMaterial(this.params)
     const pointMaterial = new THREE.PointsMaterial({
-      size: 0.0095,
+      size: 0.03,
       color: '#37C8B2'
     })
     bubbleMaterial.onBeforeCompile = shader => {
@@ -44,8 +44,8 @@ createApp({
     }
     
     this.bubble = new THREE.Mesh(bubbleGeometry, bubbleMaterial)
-    this.net = new THREE.Mesh(pointGeometry, pointMaterial)
-    this.scene.add(this.net)
+    this.net = new THREE.Points(pointGeometry, pointMaterial)
+    this.scene.add(this.net, this.bubble)
     
   },
   tick(time) {
